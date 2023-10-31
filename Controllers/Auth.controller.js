@@ -1,30 +1,82 @@
 import UserModals from "../Modals/User.modals.js";
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-export const Login = (req, res) => {
-    res.send("Hello from login")
+export const Login = async (req, res) => {
+    // res.send("Hello from login")
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) return res.status(401).json({ success: false, message: "all field are mandatory" })
+
+        const user = await UserModals.findOne({ email:email })
+
+        // console.log(user, "user")
+        if(!user) return res.status(401).json({ success:false , message:"email not valid"})
+
+        const isPasswordCorrect = await bcrypt.compare(password , user.password)
+
+        console.log(isPasswordCorrect,"check here");
+
+        if(!isPasswordCorrect){
+            return res.status(401).json({success : false ,message : "Password not matched"})
+        }
+ //generate token
+ const token = await jwt.sign({id : user._id}, process.env.JWT_SECRET); 
+
+ // console.log(token , "Token")
+        return res.status(200).json({success : true , message : "Login Successfull", user : {name : user.name , id : user._id,token}});
+
+
+
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error });
+    }
 }
 export const Register = async (req, res) => {
+    // res.send("Hello from login") 
     try {
-        // console.log(req.body,"body")
-
+        // console.log(req.body, "Body");
         const { name, email, password, number } = req.body;
-        // console.log("name =", name)
-        if (!name || !email || !password || !number) return res.status(401).json({ success: false, message: "all field are mandatory" })
+
+        const hashedPassword = await bcrypt.hash(password , 10);
+
+        // console.log(hashedPassword);
+
+        if (!name || !email || !password, !number) return res.status(401).json({ sucess: false, message: "All Fields are mandatory." })
 
         const user = new UserModals({
             name: name,
-            email: email,
-            password: password,
-            number 
+            email,
+            password : hashedPassword,
+            number
         })
 
-        await user.save()
-        return res.status(200).json({ success: true, message: "registration successfull" })
+        await user.save();
 
+        return res.status(200).json({ success: true, message: "Registration Succesfull." })
+
+    } catch (error) {
+        return res.status(500).json({ sucess: false, message: error })
     }
-    catch (error) {
-        return res.status(500).json({ success: false, message: error })
+}
+export const getCurrentUser = async (req , res) => {
+    try{
+        const {token} = req.body
+    
+        if(!token) return res.status(401).json({success : false , message : "token is required"})
+
+        const {id} = await jwt.verify(token , process.env.JWT_SECRET);
+
+        console.log(id , "id")
+
+        const user = await UserModals.findById(id);
+
+        if(!user) return res.status(401).json({success : false , message : "User not Found"})
+
+        return res.status(200).json({success : true , user : {name : user.name , id : user._id}})
+
+
+    }catch(error){
+        return res.status(500).json({success : false , message : error})
     }
-
-
 }
