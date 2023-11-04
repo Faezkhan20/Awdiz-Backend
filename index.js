@@ -28,6 +28,6 @@ app.get("/",function(req,res){
 // app.get("/hello",Hello);
 app.use("/api/v1" , router)
 
-mongoose.connect(process.env.MONGOURL).then(() => console.log("database coonect"))
+mongoose.connect(process.env.MONGOURL).then(() => console.log("database connect"))
 
 app.listen(8000,()=> console.log("app is running on 8000 port"));
