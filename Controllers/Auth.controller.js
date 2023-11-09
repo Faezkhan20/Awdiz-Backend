@@ -36,19 +36,19 @@ export const Register = async (req, res) => {
     // res.send("Hello from login") 
     try {
         // console.log(req.body, "Body");
-        const { name, email, password, number } = req.body;
+        const { name, email, password} = req.body.userData;
 
         const hashedPassword = await bcrypt.hash(password , 10);
 
         // console.log(hashedPassword);
 
-        if (!name || !email || !password, !number) return res.status(401).json({ sucess: false, message: "All Fields are mandatory." })
+        if (!name || !email || !password) return res.status(401).json({ sucess: false, message: "All Fields are mandatory." })
 
         const user = new UserModals({
             name: name,
             email,
-            password : hashedPassword,
-            number
+            password : hashedPassword
+            
         })
 
         await user.save();

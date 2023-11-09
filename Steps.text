@@ -31,3 +31,12 @@ Cors connection
  npm i cors
  Step 1 : import cors from cors 
  Step 2 : app.use(cors());
+
+
+
+
+Http Methods'
+1.Post    -   Create  - User-creation
+2.Get     -    Read   - Read Products
+3.Put/Patch-update
+4.Delete-delete

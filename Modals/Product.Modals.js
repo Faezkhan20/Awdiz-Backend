@@ -10,5 +10,5 @@ const product = new Schema({
         ref: "User"
 
     }
-})
+}, { timestamps: true })
 export default mongoose.model("Product",product)

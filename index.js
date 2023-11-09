@@ -22,10 +22,14 @@ app.use((req, res, next) => {
     next();
 } )
 
-app.get("/",function(req,res){
-    res.send("hello Awdiz....")
-})
+// app.get("/",function(req,res){
+//     res.send("hello Awdiz....")
+// })
 // app.get("/hello",Hello);
+
+app.get('/',(req,res)=>{
+    res.send("welcome to Awdiz backend server")
+})
 app.use("/api/v1" , router)
 
 mongoose.connect(process.env.MONGOURL).then(() => console.log("database connect"))
