@@ -3,33 +3,29 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 export const Login = async (req, res) => {
-    // res.send("Hello from login")
     try {
-        const { email, password } = req.body;
-        if (!email || !password) return res.status(401).json({ success: false, message: "all field are mandatory" })
+        const { email, password } = req.body.userData;
+        if (!email || !password) return res.status(401).json({ success: false, message: "All fields are manmdatory.." })
 
-        const user = await UserModals.findOne({ email:email })
-
+        const user = await UserModals.findOne({ email: email });
         // console.log(user, "user")
-        if(!user) return res.status(401).json({ success:false , message:"email not valid"})
 
-        const isPasswordCorrect = await bcrypt.compare(password , user.password)
+        if (!user) return res.status(401).json({ success: false, message: "Email is wrong.." });
 
-        console.log(isPasswordCorrect,"check here");
-
-        if(!isPasswordCorrect){
-            return res.status(401).json({success : false ,message : "Password not matched"})
+        const isPasscorrect = await bcrypt.compare(password, user.password);
+        // console.log(isPasscorrect, "check here")
+        if (!isPasscorrect) {
+            return res.status(401).json({ success: false, message: "Passwprd is wrong." })
         }
- //generate token
- const token = await jwt.sign({id : user._id}, process.env.JWT_SECRET); 
+        // generate token
 
- // console.log(token , "Token")
-        return res.status(200).json({success : true , message : "Login Successfull", user : {name : user.name , id : user._id,token}});
+        const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+        // console.log(token, "token")
 
-
+        return res.status(200).json({ success: true, message: "Login successfull.", user: { name: user.name, id: user._id }, token })
 
     } catch (error) {
-        return res.status(500).json({ success: false, message: error });
+        return res.status(500).json({ success: false, message: error })
     }
 }
 export const Register = async (req, res) => {
