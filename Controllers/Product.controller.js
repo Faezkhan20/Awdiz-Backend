@@ -28,6 +28,7 @@ export const getSingleProduct = async (req, res) => {
         return res.status(404).json({ success: false, message: "Product not found." })
     } catch (error) {
         return res.status(500).json({ success: false, message: error })
+        
     }
 }
 

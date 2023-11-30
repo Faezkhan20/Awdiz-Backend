@@ -5,7 +5,9 @@ export const addCart = async (req, res) => {
     try {
         const { productId, userId } = req.body;
         if (!productId || !userId) return res.status(404).json({ success: false, message: "User and Product are mandatory.." })
-        await UserModals.findByIdAndUpdate(userId, { cart: productId })
+        await UserModals.findByIdAndUpdate(
+            { _id: userId },
+            { $push: { cart: productId}})
         return res.status(201).json({ success: true, message: "Product added to cart successfully." })
     } catch (error) {
         return res.status(500).json({ success: false, message: error })
